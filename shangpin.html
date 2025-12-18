@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极光无线降噪耳机 - 商品详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./index.css">
+    <script src="./index.js"></script>
+
+</head>
+
+<body>
+    <!-- 购物车侧边栏 -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>购物车 (<span id="cartCount">0</span>)</h3>
+            <button class="close-cart" onclick="closeCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="cart-content" id="cartContent">
+            <!-- 购物车内容将通过JavaScript动态生成 -->
+            <div class="cart-empty" id="cartEmpty">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>购物车空空如也</h3>
+                <p>快去添加一些商品吧</p>
+            </div>
+
+            <div class="cart-items" id="cartItems">
+                <!-- 购物车商品项将在这里动态添加 -->
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <span class="cart-total-label">总计：</span>
+                <span class="cart-total-price" id="cartTotalPrice">¥0</span>
+            </div>
+
+            <div class="cart-actions">
+                <button class="view-cart-btn" onclick="viewCart()">
+                    <i class="fas fa-shopping-cart"></i> 查看购物车
+                </button>
+                <button class="checkout-btn" onclick="checkout()">
+                    <i class="fas fa-credit-card"></i> 去结算
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结算页面模态窗口 -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h2>结算订单</h2>
+                <button class="close-checkout" onclick="closeCheckout()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="checkout-content">
+                <!-- 结算步骤指示器 -->
+                <div class="checkout-steps">
+                    <div class="checkout-step active" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">收货地址</div>
+                    </div>
+                    <div class="checkout-step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">支付方式</div>
+                    </div>
+                    <div class="checkout-step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">确认订单</div>
+                    </div>
+                </div>
+
+                <!-- 第一步：收货地址 -->
+                <div class="checkout-section active" id="addressSection">
+                    <h3 class="section-title">选择收货地址</h3>
+
+                    <div class="address-list" id="addressList">
+                        <!-- 地址将通过JavaScript动态生成 -->
+                    </div>
+
+                    <button class="add-address-btn" onclick="addNewAddress()">
+                        <i class="fas fa-plus"></i> 添加新地址
+                    </button>
+
+                    <div class="checkout-actions">
+                        <button class="back-btn" onclick="closeCheckout()">返回购物车</button>
+                        <button class="next-btn" onclick="goToStep(2)">下一步</button>
+                    </div>
+                </div>
+
+                <!-- 第二步：支付方式 -->
+                <div class="checkout-section" id="paymentSection">
+                    <h3 class="section-title">选择支付方式</h3>
+
+                    <div class="payment-methods" id="paymentMethods">
+                        <!-- 支付方式将通过JavaScript动态生成 -->
+                    </div>
+
+                    <div class="checkout-actions">
+                        <button class="back-btn" onclick="goToStep(1)">上一步</button>
+                        <button class="next-btn" onclick="goToStep(3)">下一步</button>
+                    </div>
+                </div>
+
+                <!-- 第三步：确认订单 -->
+                <div class="checkout-section" id="confirmSection">
+                    <h3 class="section-title">确认订单信息</h3>
+
+                    <div class="order-summary" id="orderSummary">
+                        <!-- 订单摘要将通过JavaScript动态生成 -->
+                    </div>
+
+                    <div class="checkout-actions">
+                        <button class="back-btn" onclick="goToStep(2)">上一步</button>
+                        <button class="confirm-btn" onclick="placeOrder()">提交订单</button>
+                    </div>
+                </div>
+
+                <!-- 第四步：订单确认完成 -->
+                <div class="checkout-section" id="confirmationSection">
+                    <div class="confirmation-section">
+                        <div class="confirmation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 class="confirmation-title">订单提交成功！</h2>
+                        <p class="confirmation-text">
+                            您的订单已成功提交，我们将在24小时内为您处理。<br>
+                            订单详细信息已发送至您的邮箱。
+                        </p>
+
+                        <div class="order-details">
+                            <div class="order-number" id="orderNumber">订单号： #202312150001</div>
+                            <p>预计送达时间：3-5个工作日</p>
+                            <p>支付方式：<span id="selectedPayment">支付宝</span></p>
+                            <p>收货地址：<span id="selectedAddress">上海市浦东新区张江高科技园区</span></p>
+                        </div>
+
+                        <div class="checkout-actions">
+                            <button class="back-btn" onclick="closeCheckout()">返回继续购物</button>
+                            <button class="view-cart-btn" onclick="viewOrderDetails()">查看订单详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 购物车添加成功提示 -->
+    <div class="cart-notification" id="cartNotification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">商品已成功加入购物车！</span>
+    </div>
+
+    <!-- 导航栏 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="./images/LOGO.PNG" alt="">
+            </div>
+            <ul class="nav-links">
+                <a href="./index.html">
+                    <li>首页</li>
+                </a><a href="">
+                    <li>生鲜</li>
+                </a><a href="">
+                    <li>美食</li>
+                </a><a href="">
+                    <li>餐厨</li>
+                </a><a href="">
+                    <li>电器</li>
+                </a><a href="">
+                    <li>家居</li>
+                </a><a href="">
+                    <li>洗护</li>
+                </a><a href="">
+                    <li>孕婴</li>
+                </a><a href="">
+                    <li>服装</li>
+                </a>
+            </ul>
+            <div class="nav-icons">
+                <i class="fas fa-search"></i>
+                <i class="fas fa-user"></i>
+                <div class="cart-icon-container">
+                    <i class="fas fa-shopping-cart" onclick="openCart()"></i>
+                    <div class="cart-badge" id="cartBadge">0</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 商品展示区 -->
+        <div class="product-container">
+            <!-- 商品图片 -->
+            <div class="product-images">
+                <div class="main-image">
+                    <img id="mainImage"
+                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        alt="极光无线降噪耳机">
+                </div>
+                <div class="image-thumbnails">
+                    <div class="thumbnail active"
+                        onclick="changeImage('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+                            alt="耳机正面">
+                    </div>
+                    <div class="thumbnail"
+                        onclick="changeImage('https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')">
+                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+                            alt="耳机侧面">
+                    </div>
+                    <div class="thumbnail"
+                        onclick="changeImage('https://images.unsplash.com/photo-1484704849700-f032a568e944?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')">
+                        <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+                            alt="佩戴效果">
+                    </div>
+                    <div class="thumbnail"
+                        onclick="changeImage('https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')">
+                        <img src="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+                            alt="充电盒">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品信息 -->
+            <div class="product-info">
+                <h1 class="product-title">极光无线降噪耳机</h1>
+                <p class="product-subtitle">专业级主动降噪，40小时续航，Hi-Res音质认证</p>
+
+                <div class="product-rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-text">4.5 星 (1284 条评价)</span>
+                </div>
+
+                <div class="product-price">
+                    <span class="current-price" id="currentPrice">¥1,299</span>
+                    <span class="original-price">¥1,699</span>
+                    <span class="discount-badge">限时 7.6 折</span>
+                </div>
+
+                <div class="product-options">
+                    <div class="option-group">
+                        <div class="option-title">颜色选择</div>
+                        <div class="color-options">
+                            <div class="color-option color-black active" onclick="selectColor('black', '黑色')"></div>
+                            <div class="color-option color-white" onclick="selectColor('white', '白色')"></div>
+                            <div class="color-option color-blue" onclick="selectColor('blue', '蓝色')"></div>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <div class="option-title">版本选择</div>
+                        <div class="size-options">
+                            <div class="size-option active" onclick="selectSize('standard', '标准版', 1299)">标准版</div>
+                            <div class="size-option" onclick="selectSize('pro', '专业版', 1599)">专业版 (+¥300)</div>
+                            <div class="size-option" onclick="selectSize('deluxe', '豪华套装', 1799)">豪华套装 (+¥500)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="purchase-actions">
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                        <input type="text" class="quantity-input" id="quantity" value="1" readonly>
+                        <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart()">
+                        <i class="fas fa-shopping-cart"></i> 加入购物车
+                    </button>
+                    <button class="buy-now" onclick="buyNow()">
+                        <i class="fas fa-bolt"></i> 立即购买
+                    </button>
+                </div>
+
+                <div class="product-features">
+                    <div class="feature">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>全场满¥299包邮</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-undo-alt"></i>
+                        <span>30天无忧退换货</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>2年官方质保</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-credit-card"></i>
+                        <span>支持分期付款</span>
+                    </div>
+                </div>
+
+                <div class="product-tags">
+                    <span class="tag">无线耳机</span>
+                    <span class="tag">主动降噪</span>
+                    <span class="tag">Hi-Res认证</span>
+                    <span class="tag">蓝牙5.3</span>
+                    <span class="tag">长续航</span>
+                    <span class="tag">防水防汗</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品详情标签页 -->
+        <div class="detail-tabs">
+            <div class="tab-headers">
+                <div class="tab-header active" onclick="switchTab('description')">商品描述</div>
+                <div class="tab-header" onclick="switchTab('specs')">规格参数</div>
+                <div class="tab-header" onclick="switchTab('reviews')">用户评价</div>
+                <div class="tab-header" onclick="switchTab('faq')">常见问题</div>
+            </div>
+
+            <div class="tab-content">
+                <div id="description" class="tab-panel active">
+                    <h3>沉浸式音频体验</h3>
+                    <p>极光无线降噪耳机采用先进的混合主动降噪技术，能够有效消除环境噪音，让您沉浸在纯净的音乐世界中。搭载40mm驱动单元，支持LDAC高清音频编码，获得Hi-Res Audio
+                        Wireless认证，还原每一个音乐细节。</p>
+
+                    <h3>智能降噪，自适应环境</h3>
+                    <p>耳机内置智能降噪芯片，可根据环境噪音自动调整降噪深度。无论是嘈杂的街道、喧闹的办公室还是飞机舱内，都能为您提供最佳的聆听体验。</p>
+
+                    <h3>超长续航，快速充电</h3>
+                    <p>单次充电可使用长达8小时，搭配充电盒可使用40小时。支持快充功能，充电15分钟即可使用3小时，满足全天候使用需求。</p>
+
+                    <h3>舒适佩戴，全天无忧</h3>
+                    <p>采用人体工学设计，耳罩使用记忆棉材质，柔软舒适，长时间佩戴也不会感到压迫。可折叠设计，便于携带。</p>
+                </div>
+
+                <div id="specs" class="tab-panel">
+                    <h3>产品规格</h3>
+                    <ul>
+                        <li><strong>驱动单元：</strong>40mm动态驱动单元</li>
+                        <li><strong>频响范围：</strong>4Hz-40kHz</li>
+                        <li><strong>降噪深度：</strong>最大42dB</li>
+                        <li><strong>蓝牙版本：</strong>5.3</li>
+                        <li><strong>音频编码：</strong>LDAC, AAC, SBC</li>
+                        <li><strong>续航时间：</strong>8小时 (耳机) / 40小时 (搭配充电盒)</li>
+                        <li><strong>充电时间：</strong>约2小时 (耳机) / 约3小时 (充电盒)</li>
+                        <li><strong>防水等级：</strong>IPX4</li>
+                        <li><strong>重量：</strong>约265g</li>
+                    </ul>
+                </div>
+
+                <div id="reviews" class="tab-panel">
+                    <h3>用户评价 (4.5/5)</h3>
+                    <p><strong>张三：</strong> ★★★★★ 降噪效果太棒了！在地铁上完全听不到嘈杂声，音质也非常出色。</p>
+                    <p><strong>李四：</strong> ★★★★☆ 佩戴舒适，续航给力。就是价格稍微有点高，但物有所值。</p>
+                    <p><strong>王五：</strong> ★★★★★ 买过最好的无线耳机，低音浑厚，高音清晰，降噪效果一流！</p>
+                    <p><strong>赵六：</strong> ★★★★☆ 音质确实不错，但希望下一代能更轻一些。</p>
+                </div>
+
+                <div id="faq" class="tab-panel">
+                    <h3>常见问题</h3>
+                    <p><strong>Q：耳机支持同时连接多台设备吗？</strong><br>
+                        A：支持，可同时连接两台设备并智能切换。</p>
+
+                    <p><strong>Q：降噪模式可以调节吗？</strong><br>
+                        A：支持，可通过APP调节降噪强度，或选择通透模式。</p>
+
+                    <p><strong>Q：保修政策是怎样的？</strong><br>
+                        A：提供2年官方质保，非人为损坏免费维修。</p>
+
+                    <p><strong>Q：是否支持有线连接？</strong><br>
+                        A：支持，包装内附赠3.5mm音频线，可在没电时使用有线连接。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐商品 -->
+        <div class="recommendations">
+            <h2 class="section-title">你可能也喜欢</h2>
+            <div class="recommended-products">
+                <div class="recommended-product">
+                    <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        alt="入耳式无线耳机">
+                    <div class="recommended-info">
+                        <h4>灵韵真无线耳机</h4>
+                        <div class="recommended-price">¥699</div>
+                    </div>
+                </div>
+
+                <div class="recommended-product">
+                    <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        alt="头戴式耳机">
+                    <div class="recommended-info">
+                        <h4>雷霆游戏耳机</h4>
+                        <div class="recommended-price">¥899</div>
+                    </div>
+                </div>
+
+                <div class="recommended-product">
+                    <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        alt="便携音箱">
+                    <div class="recommended-info">
+                        <h4>星环便携音箱</h4>
+                        <div class="recommended-price">¥399</div>
+                    </div>
+                </div>
+
+                <div class="recommended-product">
+                    <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        alt="耳机配件">
+                    <div class="recommended-info">
+                        <h4>耳机清洁套装</h4>
+                        <div class="recommended-price">¥89</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="down">
+        <div class="down1">
+            <ul><svg t="1762849797063" class="iconjg" viewBox="0 0 1025 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="2475" width="200" height="200">
+                    <path
+                        d="M512.749634 37.081894c262.072035 0 475.167984 213.1959 475.167984 475.167984S774.821669 987.417862 512.749634 987.417862 37.58165 774.321913 37.58165 512.249878 250.677599 37.081894 512.749634 37.081894m0-36.582138C230.087653 0.499756 0.999512 229.587897 0.999512 512.249878s229.088141 511.750122 511.750122 511.750122 511.750122-229.088141 511.750122-511.750122S795.411615 0.499756 512.749634 0.499756z"
+                        fill="#1afa29" p-id="2476"></path>
+                    <path
+                        d="M692.761737 280.962811c-8.495852-5.497316-19.790337-2.998536-25.287652 5.497316L523.944168 510.75061 374.916935 286.260224c-5.597267-8.3959-16.991703-10.794729-25.287652-5.09751-8.3959 5.597267-10.694778 16.891752-5.097511 25.287652l157.822938 237.783895H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291068 0 10.095071 8.195998 18.291069 18.291069 18.291069h134.034553v73.064324H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291069s8.195998 18.291069 18.291069 18.291069h134.034553v97.652318c0 10.095071 8.195998 18.291069 18.291069 18.291069 10.095071 0 18.291069-8.195998 18.291069-18.291069v-97.652318h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069s-8.195998-18.291069-18.291068-18.291069H543.434651v-73.064324h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069 0-10.095071-8.195998-18.291069-18.291068-18.291068H545.83348l152.425573-237.983797c5.497316-8.495852 3.098487-19.790337-5.497316-25.287653z"
+                        fill="#1afa29" p-id="2477"></path>
+                </svg><a href="">
+                    <p>价格亲民</p>
+                </a></ul>
+            <ul><svg t="1762849797063" class="iconjg" viewBox="0 0 1025 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="2475" width="200" height="200">
+                    <path
+                        d="M512.749634 37.081894c262.072035 0 475.167984 213.1959 475.167984 475.167984S774.821669 987.417862 512.749634 987.417862 37.58165 774.321913 37.58165 512.249878 250.677599 37.081894 512.749634 37.081894m0-36.582138C230.087653 0.499756 0.999512 229.587897 0.999512 512.249878s229.088141 511.750122 511.750122 511.750122 511.750122-229.088141 511.750122-511.750122S795.411615 0.499756 512.749634 0.499756z"
+                        fill="#1afa29" p-id="2476"></path>
+                    <path
+                        d="M692.761737 280.962811c-8.495852-5.497316-19.790337-2.998536-25.287652 5.497316L523.944168 510.75061 374.916935 286.260224c-5.597267-8.3959-16.991703-10.794729-25.287652-5.09751-8.3959 5.597267-10.694778 16.891752-5.097511 25.287652l157.822938 237.783895H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291068 0 10.095071 8.195998 18.291069 18.291069 18.291069h134.034553v73.064324H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291069s8.195998 18.291069 18.291069 18.291069h134.034553v97.652318c0 10.095071 8.195998 18.291069 18.291069 18.291069 10.095071 0 18.291069-8.195998 18.291069-18.291069v-97.652318h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069s-8.195998-18.291069-18.291068-18.291069H543.434651v-73.064324h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069 0-10.095071-8.195998-18.291069-18.291068-18.291068H545.83348l152.425573-237.983797c5.497316-8.495852 3.098487-19.790337-5.497316-25.287653z"
+                        fill="#1afa29" p-id="2477"></path>
+                </svg><a href="">
+                    <p>物流快捷</p>
+                </a></ul>
+            <ul><svg t="1762849797063" class="iconjg" viewBox="0 0 1025 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="2475" width="200" height="200">
+                    <path
+                        d="M512.749634 37.081894c262.072035 0 475.167984 213.1959 475.167984 475.167984S774.821669 987.417862 512.749634 987.417862 37.58165 774.321913 37.58165 512.249878 250.677599 37.081894 512.749634 37.081894m0-36.582138C230.087653 0.499756 0.999512 229.587897 0.999512 512.249878s229.088141 511.750122 511.750122 511.750122 511.750122-229.088141 511.750122-511.750122S795.411615 0.499756 512.749634 0.499756z"
+                        fill="#1afa29" p-id="2476"></path>
+                    <path
+                        d="M692.761737 280.962811c-8.495852-5.497316-19.790337-2.998536-25.287652 5.497316L523.944168 510.75061 374.916935 286.260224c-5.597267-8.3959-16.991703-10.794729-25.287652-5.09751-8.3959 5.597267-10.694778 16.891752-5.097511 25.287652l157.822938 237.783895H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291068 0 10.095071 8.195998 18.291069 18.291069 18.291069h134.034553v73.064324H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291069s8.195998 18.291069 18.291069 18.291069h134.034553v97.652318c0 10.095071 8.195998 18.291069 18.291069 18.291069 10.095071 0 18.291069-8.195998 18.291069-18.291069v-97.652318h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069s-8.195998-18.291069-18.291068-18.291069H543.434651v-73.064324h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069 0-10.095071-8.195998-18.291069-18.291068-18.291068H545.83348l152.425573-237.983797c5.497316-8.495852 3.098487-19.790337-5.497316-25.287653z"
+                        fill="#1afa29" p-id="2477"></path>
+                </svg><a href="">
+                    <p>品质新鲜</p>
+                </a></ul>
+            <ul><svg t="1762849797063" class="iconjg" viewBox="0 0 1025 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="2475" width="200" height="200">
+                    <path
+                        d="M512.749634 37.081894c262.072035 0 475.167984 213.1959 475.167984 475.167984S774.821669 987.417862 512.749634 987.417862 37.58165 774.321913 37.58165 512.249878 250.677599 37.081894 512.749634 37.081894m0-36.582138C230.087653 0.499756 0.999512 229.587897 0.999512 512.249878s229.088141 511.750122 511.750122 511.750122 511.750122-229.088141 511.750122-511.750122S795.411615 0.499756 512.749634 0.499756z"
+                        fill="#1afa29" p-id="2476"></path>
+                    <path
+                        d="M692.761737 280.962811c-8.495852-5.497316-19.790337-2.998536-25.287652 5.497316L523.944168 510.75061 374.916935 286.260224c-5.597267-8.3959-16.991703-10.794729-25.287652-5.09751-8.3959 5.597267-10.694778 16.891752-5.097511 25.287652l157.822938 237.783895H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291068 0 10.095071 8.195998 18.291069 18.291069 18.291069h134.034553v73.064324H372.81796c-10.095071 0-18.291069 8.195998-18.291069 18.291069s8.195998 18.291069 18.291069 18.291069h134.034553v97.652318c0 10.095071 8.195998 18.291069 18.291069 18.291069 10.095071 0 18.291069-8.195998 18.291069-18.291069v-97.652318h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069s-8.195998-18.291069-18.291068-18.291069H543.434651v-73.064324h121.840508c10.095071 0 18.291069-8.195998 18.291068-18.291069 0-10.095071-8.195998-18.291069-18.291068-18.291068H545.83348l152.425573-237.983797c5.497316-8.495852 3.098487-19.790337-5.497316-25.287653z"
+                        fill="#1afa29" p-id="2477"></path>
+                </svg><a href="">
+                    <p>售后无忧</p>
+                </a></ul>
+        </div>
+        <tr>
+            <div class="help">
+                <div class="helpleft">
+                    <ul>
+                        <h3>购物指南</h3><a href="">
+                            <p>购物流程</p>
+                        </a><a href="">
+                            <p>支付方式</p>
+                        </a><a href="">
+                            <p>售后规则</p>
+                        </a>
+                    </ul>
+                    <ul>
+                        <h3>配送方式</h3><a href="">
+                            <p>配送运费
+
+                            </p>
+                        </a><a href="">
+                            <p>配送范围</p>
+                        </a><a href="">
+                            <p>配送时间</p>
+                        </a>
+                    </ul>
+                    <ul>
+                        <h3>关于我们
+
+
+                        </h3><a href="">
+                            <p>平台规则</p>
+                        </a><a href="">
+                            <p>联系我们</p>
+                        </a><a href="">
+                            <p>问题反馈</p>
+                        </a>
+                    </ul>
+                    <ul>
+                        <h3>售后服务
+
+
+                        </h3><a href="">
+                            <p>售后政策 </p>
+                        </a><a href="">
+                            <p>退款说明</p>
+                        </a><a href="">
+                            <p>取消订单</p>
+                        </a>
+                    </ul>
+                    <ul>
+                        <h3>服务热线
+
+
+                        </h3><a href="">
+                            <p>在线客服 <svg t="1762851377401" class="iconkf" viewBox="0 0 1024 1024" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" p-id="4666" width="200" height="200">
+                                    <path
+                                        d="M927.616 465.6C923.328 236.704 745.888 51.808 528 51.808h-32c-217.888 0-395.328 184.896-399.616 413.76C58.112 487.744 32 528.672 32 576v64c0 70.592 57.408 128 128 128s128-57.408 128-128v-64a128.064 128.064 0 0 0-126.784-127.872C173.728 262.688 318.912 115.808 496 115.808h32c177.12 0 322.272 146.88 334.784 332.32A128.064 128.064 0 0 0 736 576v64c0 57.792 38.72 106.176 91.392 122.016a337.504 337.504 0 0 1-191.936 124.48A79.712 79.712 0 0 0 560 832a80 80 0 1 0 0 160 79.68 79.68 0 0 0 67.872-38.112 402.432 402.432 0 0 0 278.24-193.6C955.968 742.816 992 695.776 992 640v-64c0-47.328-26.112-88.256-64.384-110.4zM224 576v64c0 35.296-28.704 64-64 64s-64-28.704-64-64v-64c0-35.296 28.704-64 64-64s64 28.704 64 64z m704 64c0 34.304-27.2 62.176-61.12 63.712l-2.496-1.184c-0.224 0.512-0.576 0.928-0.8 1.408A64 64 0 0 1 800 640v-64c0-35.296 28.704-64 64-64s64 28.704 64 64v64z"
+                                        p-id="4667"></path>
+                                </svg></p>
+                        </a><a href="">
+                            <p>客服电话 400-0000-000</p>
+                        </a><a href="">
+                            <p>工作时间 周一至周日 8:00-18:00</p>
+                        </a>
+                    </ul>
+
+                </div>
+                <div class="helpright">
+                    <li><img src="./images/wechat.png" alt="">
+                        <p>微信公众号</p>
+                    </li>
+                    <li><img src="./images/wechat.png" alt="">
+                        <p>微信公众号</p>
+                    </li>
+                </div>
+            </div>
+            <div class="gy">
+                <a href="">关于我们&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;帮助中心&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;售后服务&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;配送与验收&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                    商务合作&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;搜索推荐&nbsp;&nbsp;&nbsp;| </a>
+                <p><a href="">@CopyRight © 林建裕 25216950136</a></p>
+            </div>
+    </div>
+
+</body>
+
+</html>
